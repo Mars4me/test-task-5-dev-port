@@ -17,8 +17,4 @@ export default {
 };
 </script>
 
-<style>
-body {
-    overflow: scroll;
-}
-</style>
+<style></style>

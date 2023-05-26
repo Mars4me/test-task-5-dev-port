@@ -1,15 +1,17 @@
 <template>
-    <div class="wrapper">
+    <section class="user-page">
         <h2>{{ getCurrentUser.name }}</h2>
         <div class="info-block">
             <p v-for="(item, id) in Object.keys(getCurrentUser)" :key="id">
                 {{ `${item} -  ${JSON.stringify(getCurrentUser[item])} ` }}
             </p>
         </div>
-    </div>
+        <button class="logout" @click="logout">EXIT</button>
+    </section>
 </template>
 
 <script>
+import { LocalStorageService } from '@/service/LocalStorage.service';
 import { mapGetters, mapActions } from 'vuex';
 export default {
     name: 'UserPage',
@@ -18,6 +20,10 @@ export default {
     },
     methods: {
         ...mapActions(['initialCurrentUser']),
+        logout() {
+            LocalStorageService.removeUser();
+            this.$router.push('/login');
+        },
     },
     computed: {
         ...mapGetters(['getCurrentUser']),
@@ -35,9 +41,14 @@ h2 {
     background-color: #5f5f5f;
     padding: 20px 0;
 }
-.wrapper {
+.user-page {
     background-color: #c4c4c4;
     border-radius: 5px;
+}
+
+.logout {
+    padding: 5px 20px;
+    margin: 10px 20px;
 }
 
 .info-block {

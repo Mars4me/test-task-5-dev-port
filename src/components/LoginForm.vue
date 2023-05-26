@@ -40,6 +40,7 @@
 <script>
 import { mapGetters, mapActions } from 'vuex';
 import { validation } from '@/utils/validation';
+import { LocalStorageService } from '@/service/LocalStorage.service';
 export default {
     data() {
         return {
@@ -53,13 +54,13 @@ export default {
     methods: {
         ...mapActions(['initialUsers']),
         login() {
-            const user = this.fakeLogin();
+            const user = this.fakeAuth();
 
             if (!user) {
                 this.loginError = true;
                 return;
             }
-            localStorage.setItem('user', JSON.stringify(user));
+            LocalStorageService.setUser(user);
             this.$router.push('/');
         },
         handleInput(event) {
@@ -67,22 +68,19 @@ export default {
             const keyPressed = event.key;
 
             if (!validation(keyPressed, id)) {
-                this[`${id}Error`] = true;
-
                 event.preventDefault();
+
+                this[`${id}Error`] = true;
             } else {
                 this[`${id}Error`] = false;
             }
         },
-        fakeLogin() {
+        fakeAuth() {
             return this.getUsers.find((el) => el.name === this.username && el.phone === this.phoneNumber);
         },
     },
     computed: {
         ...mapGetters(['getUsers']),
-    },
-    mounted() {
-        this.initialUsers();
     },
 };
 </script>
@@ -95,7 +93,7 @@ h2 {
 
 .wrapper {
     margin: 0 auto;
-    flex-basis: 447px;
+    max-width: 447px;
     border: 1px solid #ccc;
     border-radius: 5px;
     background-color: #a5a5a5;

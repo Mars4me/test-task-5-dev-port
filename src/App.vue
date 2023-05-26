@@ -1,11 +1,20 @@
 <template>
     <div id="app">
-        <!-- <nav>
-      <router-link to="/">Home</router-link>
-    </nav> -->
         <router-view />
     </div>
 </template>
+
+<script>
+import { mapActions } from 'vuex';
+export default {
+    methods: {
+        ...mapActions(['initialUsers']),
+    },
+    mounted() {
+        this.initialUsers();
+    },
+};
+</script>
 
 <style>
 * {
@@ -13,6 +22,10 @@
     color: #5f5f5f;
     padding: 0;
     margin: 0;
+}
+
+body {
+    overflow: scroll;
 }
 
 li {
