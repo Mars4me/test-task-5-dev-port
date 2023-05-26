@@ -1,110 +1,47 @@
 <template>
     <div class="wrapper">
-      <h2>{{getCurrentUser.name}}</h2>
-      <div class="container">
-        <button @click="clickMe">PressMe</button>
-       
-      </div>
+        <h2>{{ getCurrentUser.name }}</h2>
+        <div class="info-block">
+            <p v-for="(item, id) in Object.keys(getCurrentUser)" :key="id">
+                {{ `${item} -  ${JSON.stringify(getCurrentUser[item])} ` }}
+            </p>
+        </div>
     </div>
-  </template>
-  
-  <script>
-  import { mapGetters, mapActions } from 'vuex'
-  export default {
+</template>
+
+<script>
+import { mapGetters, mapActions } from 'vuex';
+export default {
     name: 'UserPage',
     data() {
-      return {
-
-      };
+        return {};
     },
     methods: {
-      ...mapActions(['initialCurrentUser']),
-      clickMe() {
-        this.$forceUpdate()
-        console.log(this.getCurrentUser)
-      }
-     
+        ...mapActions(['initialCurrentUser']),
     },
     computed: {
-      ...mapGetters(['getCurrentUser'])
+        ...mapGetters(['getCurrentUser']),
     },
-    async mounted() {
-      try {
-        this.initialCurrentUser()
-      } catch (error) {
-        console.log(error)
-      }
+    mounted() {
+        this.initialCurrentUser();
     },
+};
+</script>
 
-  };
-  </script>
-  
-  <style scoped>
-  h2 {
+<style scoped>
+h2 {
     text-align: center;
-    padding: 15px 0;
-  }
-  
-  .wrapper {
-    margin: 0 auto;
-    flex-basis: 447px;
-    border: 1px solid #ccc;
-    border-radius: 5px;
-    background-color: #A5A5A5;
-  }
-  
-  .container {
-    padding: 15px 25px 30px;
-    background-color: #C4C4C4;
-  }
-  
-  form p {
-    margin-bottom: 14px;
-  }
-  .form-group {
-    position: relative;
-    padding-bottom: 20px;
-  }
-  .last-form-item {
-    padding-bottom: 25px;
-  }
-  
-  .form-group label {
-    display: block;
-    font-weight: bold;
-    margin-bottom: 5px;
-  }
-  
-  .form-group input {
-    width: 100%;
-    padding: 8px;
-    border: none;
-    border-radius: 5px;
-  }
-  
-  .error-message {
-    position: absolute;
-    top: -14px;
-    left: 5px;
-    color: red;
-    font-size: 12px;
-  }
-  
-  .button-container {
-    text-align: center;
-  }
-  
-  .button-container button {
-    width: 100%;
-    padding: 10px 30px;
     color: white;
-    font-size: 17px;
-    line-height: 21px;
-    letter-spacing: -0.025em;
-    background-color: #519945;
-    border: none;
-    border-radius: 3px;
-    cursor: pointer;
-  }
-  </style>
-  
+    background-color: #5f5f5f;
+    padding: 20px 0;
+}
+.wrapper {
+    background-color: #c4c4c4;
+    border-radius: 5px;
+}
+
+.info-block {
+    padding: 10px 20px;
+    background-color: #c4c4c4;
+}
+</style>
