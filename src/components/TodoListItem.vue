@@ -1,6 +1,8 @@
 <template>
     <li>
-        <span :class="{ completed: todo.completed }">{{ todo.id }} - {{ todo.title }}</span>
+        <span :class="{ completed: todo.completed, favorites: isFavorite }"
+            >{{ todo.id }} - {{ todo.title }}</span
+        >
         <button :data-todo-id="todo.id">
             {{ isFavorite ? 'Added' : 'Add Favorite' }}
         </button>
@@ -24,6 +26,10 @@ button {
 }
 .completed {
     text-decoration: line-through;
+}
+
+.favorites {
+    background: rgba(27, 196, 190, 0.5);
 }
 
 li {

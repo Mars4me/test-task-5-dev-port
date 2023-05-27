@@ -27,7 +27,7 @@
                 v-for="todo in filteredTodos"
                 :key="todo.id"
                 :todo="todo"
-                :isFavorite="isFavorite(todo.id)"
+                :isFavorite="isTodoInFavorites(todo.id)"
             />
         </ul>
         <h3 v-else>No todos</h3>
@@ -53,7 +53,7 @@ export default {
         TodoListItem,
     },
     computed: {
-        ...mapGetters(['getUsers', 'getTodos', 'getFavorites']),
+        ...mapGetters(['getUsers', 'getTodos', 'getFavorites', 'isTodoInFavorites']),
         filteredTodos() {
             let filtered = this.getTodos;
 
@@ -62,7 +62,7 @@ export default {
             } else if (this.selectedFilter === 'uncompleted') {
                 filtered = filtered.filter((todo) => !todo.completed);
             } else if (this.selectedFilter === 'favorites') {
-                filtered = filtered.filter((todo) => this.isFavorite(todo.id));
+                filtered = filtered.filter((todo) => this.isTodoInFavorites(todo.id));
             }
 
             if (this.selectedUserId !== '') {
@@ -91,13 +91,7 @@ export default {
             if (todoId !== null && todoId !== undefined) {
                 LocalStorageService.toggleFavorites(+todoId);
                 this.initFavorites();
-                this.$forceUpdate();
             }
-        },
-
-        isFavorite(todoId) {
-            const favorites = this.getFavorites;
-            return favorites.includes(todoId);
         },
     },
     mounted() {
