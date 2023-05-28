@@ -16,21 +16,23 @@
             </select>
         </div>
         <div class="filter">
-            <label for="userId">Filter by User:</label>
+            <label for="userId">Filter by {{ getUsers[selectedUserId - 1]?.name || 'ALL' }}</label>
             <select id="userId" v-model="selectedUserId">
                 <option :value="''">All Users</option>
                 <option v-for="user in getUsers" :key="user.id" :value="user.id">{{ user.name }}</option>
             </select>
         </div>
-        <ul @click="handleChangeFavorites" v-if="filteredTodos.length > 0">
+        <transition name="fade">
+            <div class="loading" v-show="loading">Loading</div>
+        </transition>
+        <ul @click="handleChangeFavorites" ref="infinite" id="infinite-list">
             <TodoListItem
-                v-for="todo in filteredTodos"
+                v-for="todo in showItems"
                 :key="todo.id"
                 :todo="todo"
                 :isFavorite="isTodoInFavorites(todo.id)"
             />
         </ul>
-        <h3 v-else>No todos</h3>
     </section>
 </template>
 
@@ -38,6 +40,7 @@
 import TodoListItem from '@/components/TodoListItem';
 import { LocalStorageService } from '@/service/LocalStorage.service';
 import { mapGetters, mapActions } from 'vuex';
+import debounce from '@/helpers/debounce';
 
 export default {
     name: 'TodoList',
@@ -47,6 +50,8 @@ export default {
             selectedFilter: 'all',
             selectedUserId: '',
             newTodo: '',
+            loading: false,
+            showMore: 1,
         };
     },
     components: {
@@ -71,6 +76,17 @@ export default {
 
             return filtered;
         },
+        showItems() {
+            return this.filteredTodos.slice(0, 20 * this.showMore);
+        },
+    },
+    watch: {
+        selectedUserId(_, __) {
+            this.showMore = 1;
+        },
+        selectedFilter(_, __) {
+            this.showMore = 1;
+        },
     },
     methods: {
         ...mapActions(['initialUsers', 'initialTodos', 'addTodo', 'initFavorites']),
@@ -93,10 +109,35 @@ export default {
                 this.initFavorites();
             }
         },
+        addMore() {
+            this.loading = true;
+            setTimeout(() => {
+                this.showMore++;
+                this.loading = false;
+            }, 200);
+        },
+
+        isItemsShowedFull() {
+            return this.filteredTodos.length === this.showItems.length;
+        },
+
+        scrollHandler() {
+            console.log('hello');
+            if (this.isItemsShowedFull()) return false;
+            if (window.innerHeight + window.pageYOffset >= document.body.offsetHeight) {
+                this.addMore();
+            }
+        },
     },
     mounted() {
         this.initialTodos();
         this.initFavorites();
+
+        window.addEventListener('scroll', debounce(this.scrollHandler, 200));
+    },
+
+    destroyed() {
+        window.removeEventListener('scroll', debounce(this.scrollHandler, 200));
     },
 };
 </script>
@@ -130,5 +171,26 @@ export default {
 
 .filter > * {
     margin-right: 8px;
+}
+
+.loading {
+    text-align: center;
+    position: fixed;
+    color: #fff;
+    z-index: 9;
+    background: #5c4084;
+    padding: 8px 18px;
+    border-radius: 5px;
+    left: calc(50% - 45px);
+    top: calc(50% - 18px);
+}
+
+.fade-enter-active,
+.fade-leave-active {
+    transition: opacity 0.5s;
+}
+.fade-enter,
+.fade-leave-to {
+    opacity: 0;
 }
 </style>
